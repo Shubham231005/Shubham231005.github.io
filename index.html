@@ -1,166 +1,318 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SHUBHAM | DATA SHINOBI</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Noto+Sans+JP:wght@300;900&family=JetBrains+Mono:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
 
         :root {
             --neon-cyan: #00f2ff;
             --neon-pink: #ff00ff;
-            --dark-void: #050505;
-            --manga-border: #ffffff;
+            --neon-purple: #bc13fe;
+            --bg-dark: #050505;
         }
 
         body {
-            background-color: var(--dark-void);
+            background-color: var(--bg-dark);
             color: #ffffff;
-            font-family: 'Noto Sans JP', sans-serif;
+            font-family: 'Space Grotesk', sans-serif;
             overflow-x: hidden;
+            cursor: none;
+            /* Custom cursor */
+        }
+
+        /* --- Dynamic Background --- */
+        .cyber-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             background-image:
-                linear-gradient(rgba(255, 0, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 242, 255, 0.05) 1px, transparent 1px);
-            background-size: 50px 50px;
-        }
-
-        .manga-card {
-            background: rgba(10, 10, 15, 0.9);
-            border: 3px solid #fff;
-            box-shadow: 8px 8px 0px var(--neon-cyan), 15px 15px 0px rgba(0, 0, 0, 0.5);
-            position: relative;
-            transition: all 0.2s ease;
-        }
-
-        .manga-card:hover {
-            transform: translate(-4px, -4px);
-            box-shadow: 12px 12px 0px var(--neon-pink);
-        }
-
-        .neon-text {
-            text-shadow: 0 0 10px var(--neon-cyan);
-        }
-
-        .kanji-sidebar {
-            writing-mode: vertical-rl;
-            text-orientation: upright;
-            font-weight: 900;
-            color: rgba(255, 255, 255, 0.1);
-            font-size: 4rem;
-            position: absolute;
-            right: 0;
-            top: 100px;
+                linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 0, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -2;
             pointer-events: none;
         }
 
-        /* Anime Eye Animation */
-        .eye-container {
-            width: 150px;
-            height: 60px;
-            background: #fff;
-            border-radius: 50% / 100% 100% 0 0;
+        .ambient-glow {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 242, 255, 0.15), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
+            filter: blur(50px);
+            transition: transform 0.2s ease-out;
+        }
+
+        /* --- Glassmorphism Cards --- */
+        .glass-card {
+            background: rgba(20, 20, 30, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
             position: relative;
             overflow: hidden;
-            border: 4px solid var(--neon-cyan);
-            background: black;
-            transform: scaleY(-1);
-            /* Make it look like a "cool" narrowed eye */
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .iris {
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: 0.5s;
+        }
+
+        .glass-card:hover::before {
+            left: 100%;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+        }
+
+        /* --- Custom Cursor --- */
+        .cursor-dot,
+        .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--neon-cyan);
+        }
+
+        .cursor-outline {
             width: 40px;
             height: 40px;
-            background: radial-gradient(circle, var(--neon-pink) 30%, transparent 70%);
-            border: 2px solid var(--neon-cyan);
-            border-radius: 50%;
-            position: absolute;
-            top: 10px;
-            left: 55px;
-            box-shadow: 0 0 15px var(--neon-pink);
+            border: 1px solid var(--neon-pink);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
         }
 
-        /* Bouncing Skills behind Photo */
-        #data-particles {
+        /* --- Typography Effects --- */
+        .glitch-text {
+            font-family: 'Syncopate', sans-serif;
+            position: relative;
+        }
+
+        .glitch-text::before,
+        .glitch-text::after {
+            content: attr(data-text);
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 0;
+            background: var(--bg-dark);
         }
 
-        .cyber-btn {
-            background: transparent;
+        .glitch-text::before {
+            left: 2px;
+            text-shadow: -1px 0 var(--neon-pink);
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+
+        .glitch-text::after {
+            left: -2px;
+            text-shadow: -1px 0 var(--neon-cyan);
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% {
+                clip: rect(35px, 9999px, 16px, 0);
+            }
+
+            5% {
+                clip: rect(74px, 9999px, 86px, 0);
+            }
+
+            10% {
+                clip: rect(12px, 9999px, 73px, 0);
+            }
+
+            100% {
+                clip: rect(65px, 9999px, 10px, 0);
+            }
+        }
+
+        @keyframes glitch-anim2 {
+            0% {
+                clip: rect(15px, 9999px, 66px, 0);
+            }
+
+            5% {
+                clip: rect(44px, 9999px, 36px, 0);
+            }
+
+            10% {
+                clip: rect(82px, 9999px, 3px, 0);
+            }
+
+            100% {
+                clip: rect(5px, 9999px, 90px, 0);
+            }
+        }
+
+        /* --- Scroll Reveal Animation --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Eye Animation Refined --- */
+        .eye-container {
+            width: 120px;
+            height: 45px;
+            background: #000;
             border: 2px solid var(--neon-cyan);
-            color: var(--neon-cyan);
-            padding: 10px 20px;
-            font-family: 'Syncopate', sans-serif;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
-            transition: all 0.3s;
+            border-radius: 0 0 100% 100%;
+            /* Half circle bottom */
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 10px var(--neon-cyan);
         }
 
-        .cyber-btn:hover {
-            background: var(--neon-cyan);
-            color: black;
-            box-shadow: 0 0 20px var(--neon-cyan);
+        .iris {
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, #fff 10%, var(--neon-pink) 40%, transparent 80%);
+            border-radius: 50%;
+            position: absolute;
+            top: 5px;
+            left: 45px;
+            box-shadow: 0 0 15px var(--neon-pink);
+            transition: transform 0.1s ease-out;
         }
 
-        .skill-tag {
-            background: #fff;
-            color: #000;
-            padding: 2px 8px;
+        .skill-bar-fill {
+            transition: width 1.5s ease-in-out;
+        }
+
+        .kanji-watermark {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            writing-mode: vertical-rl;
+            font-size: 8rem;
             font-weight: 900;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            margin: 2px;
-            display: inline-block;
+            color: rgba(255, 255, 255, 0.03);
+            pointer-events: none;
+            z-index: -1;
         }
     </style>
 </head>
 
-<body class="p-4 md:p-10">
+<body class="p-4 md:p-8">
 
-    <div class="kanji-sidebar">人工知能データ</div>
+    <div class="cyber-grid"></div>
+    <div class="ambient-glow" id="glow-follow"></div>
+    <div class="kanji-watermark">データ忍者</div>
 
-    <!-- Header Section -->
-    <header class="max-w-7xl mx-auto mb-16 flex flex-col md:flex-row items-center gap-10">
-        <div class="relative">
-            <!-- Bouncing Data Behind Profile -->
-            <canvas id="data-particles" class="rounded-full"></canvas>
+    <div class="cursor-dot" data-cursor-dot></div>
+    <div class="cursor-outline" data-cursor-outline></div>
+
+    <header class="max-w-7xl mx-auto mt-10 mb-24 flex flex-col md:flex-row items-center justify-between gap-12 reveal">
+        <div class="relative group">
+            <canvas id="data-particles" class="absolute -top-10 -left-10 w-[140%] h-[140%] z-0 opacity-60"></canvas>
 
             <div
-                class="w-48 h-48 border-8 border-white bg-slate-900 rounded-full relative z-10 flex items-center justify-center overflow-hidden shadow-[10px_10px_0px_var(--neon-pink)]">
-                <!-- Replace with your actual photo -->
-                <span class="text-8xl">👾</span>
-                <!-- <img src="YOUR_PHOTO_URL" class="w-full h-full object-cover"> -->
+                class="w-48 h-48 md:w-64 md:h-64 rounded-full relative z-10 p-1 bg-gradient-to-tr from-cyan-400 via-pink-500 to-purple-600">
+                <div class="w-full h-full rounded-full overflow-hidden bg-black border-4 border-black relative">
+                    <img src="https://avatars.githubusercontent.com/u/176796328?v=4"
+                        class="w-full h-full object-cover transition duration-500 group-hover:scale-110 grayscale group-hover:grayscale-0">
+                </div>
             </div>
         </div>
 
-        <div class="flex-1 text-center md:text-left">
-            <h1 class="text-4xl md:text-6xl font-black italic tracking-tighter mb-2" style="font-family: 'Syncopate';">
+        <div class="flex-1 text-center md:text-left z-10">
+            <div
+                class="inline-block px-3 py-1 border border-cyan-500 text-cyan-400 text-xs font-mono mb-4 tracking-widest">
+                SYSTEM ONLINE</div>
+            <h1 class="text-5xl md:text-8xl font-black italic tracking-tighter mb-4 glitch-text" data-text="SHUBHAM">
                 SHUBHAM<br>PARANDE
             </h1>
-            <div class="flex flex-wrap gap-4 mt-4 justify-center md:justify-start">
-                <span class="bg-cyan-500 text-black font-black px-4 py-1 skew-x-[-12deg]">AI ENGINEER</span>
-                <span class="bg-white text-black font-black px-4 py-1 skew-x-[-12deg]">DATA SCIENCE</span>
-                <span class="bg-pink-500 text-white font-black px-4 py-1 skew-x-[-12deg]">ANDROID</span>
+            <div class="h-1 w-20 bg-pink-500 mb-6 mx-auto md:mx-0"></div>
+            <p class="text-xl text-gray-400 max-w-lg mx-auto md:mx-0 font-light">
+                Engineering intelligent pipelines and visualizing the invisible. <br>
+                <span class="text-white font-bold">AI Engineer</span> & <span class="text-white font-bold">Data
+                    Scientist</span> based in Mumbai.
+            </p>
+
+            <div class="flex flex-wrap gap-4 mt-8 justify-center md:justify-start">
+                <a href="#projects"
+                    class="group relative px-8 py-3 bg-white text-black font-black uppercase tracking-widest overflow-hidden">
+                    <span class="relative z-10 group-hover:text-white transition">View Protocols</span>
+                    <div
+                        class="absolute inset-0 bg-cyan-500 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 ease-out">
+                    </div>
+                </a>
+
+                <a href="C:\Users\Shubham\Downloads\Shubham_Parande_Resume.pdf" download="Shubham_Parande_CV.pdf"
+                    class="group px-8 py-3 border border-cyan-500/50 text-cyan-400 font-bold uppercase tracking-widest hover:bg-cyan-500 hover:text-black transition-all duration-300 flex items-center gap-2">
+                    <i class="fas fa-file-arrow-down group-hover:animate-bounce"></i>
+                    <span>Resume_</span>
+                </a>
+
+                <a href="mailto:sparande495@gmail.com"
+                    class="px-6 py-3 border border-white/30 text-white font-bold uppercase tracking-widest hover:border-pink-500 hover:text-pink-500 transition">
+                    Connect
+                </a>
             </div>
         </div>
     </header>
 
-    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-10">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-        <!-- SIDEBAR: Anime Stats -->
-        <div class="space-y-8">
-            <div class="manga-card p-6">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="font-black text-xl italic underline decoration-cyan-500">CORE_SYSTEMS</h3>
+        <div class="lg:col-span-4 space-y-8">
+
+            <section class="glass-card p-8 rounded-2xl reveal">
+                <div class="flex items-center gap-3 mb-4 text-cyan-400">
+                    <i class="fas fa-terminal"></i>
+                    <h3 class="font-bold font-mono tracking-widest text-sm">SUMMARY_LOG</h3>
+                </div>
+                <p class="text-gray-300 leading-relaxed">
+                    Specialized in cleaning noisy data, predictive analysis, and building immersive automation pipelines
+                    on World Data. Currently evolving at <span class="text-white font-bold">VCET Mumbai</span> (CGPA:
+                    8.0).
+                </p>
+            </section>
+
+            <div class="glass-card p-8 rounded-2xl reveal">
+                <div class="flex items-center justify-between mb-8">
+                    <h3 class="font-bold font-mono tracking-widest text-sm border-b border-pink-500 pb-1">VISION_SYSTEMS
+                    </h3>
                     <div class="eye-container" id="anime-eye">
                         <div class="iris" id="iris"></div>
                     </div>
@@ -168,193 +320,225 @@
 
                 <div class="space-y-6">
                     <div>
-                        <div class="flex justify-between text-xs font-bold mb-1">
-                            <span>PYTHON_LEVEL</span>
+                        <div class="flex justify-between text-xs font-bold mb-2 font-mono">
+                            <span>PYTHON_MASTERY</span>
                             <span class="text-cyan-400">95%</span>
                         </div>
-                        <div class="w-full h-3 bg-gray-900 border-2 border-white">
-                            <div class="h-full bg-cyan-400 w-[95%]"></div>
+                        <div class="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
+                            <div class="h-full bg-cyan-400 shadow-[0_0_10px_#00f2ff] skill-bar-fill w-0"
+                                data-width="95%"></div>
                         </div>
                     </div>
                     <div>
-                        <div class="flex justify-between text-xs font-bold mb-1">
+                        <div class="flex justify-between text-xs font-bold mb-2 font-mono">
                             <span>DATA_ANALYTICS</span>
                             <span class="text-pink-400">90%</span>
                         </div>
-                        <div class="w-full h-3 bg-gray-900 border-2 border-white">
-                            <div class="h-full bg-pink-400 w-[90%]"></div>
+                        <div class="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
+                            <div class="h-full bg-pink-400 shadow-[0_0_10px_#ff00ff] skill-bar-fill w-0"
+                                data-width="90%"></div>
                         </div>
                     </div>
                     <div>
-                        <div class="flex justify-between text-xs font-bold mb-1">
+                        <div class="flex justify-between text-xs font-bold mb-2 font-mono">
                             <span>FLUTTER_UI</span>
                             <span class="text-yellow-400">85%</span>
                         </div>
-                        <div class="w-full h-3 bg-gray-900 border-2 border-white">
-                            <div class="h-full bg-yellow-400 w-[85%]"></div>
+                        <div class="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
+                            <div class="h-full bg-yellow-400 shadow-[0_0_10px_#facc15] skill-bar-fill w-0"
+                                data-width="85%"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="manga-card p-6 border-pink-500">
-                <h3 class="font-black text-xl mb-4 italic">LINGUISTICS_//</h3>
-                <div class="space-y-2 font-black text-sm">
-                    <div class="flex justify-between border-b border-white/20 pb-2">
-                        <span>ENGLISH</span><span class="text-cyan-400">FLUENT</span>
+            <div class="glass-card p-6 rounded-2xl border-l-4 border-l-cyan-500 reveal">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">ICATES 2025</h3>
+                        <p class="text-xs text-cyan-400 font-mono mb-2">PUBLICATION ACCEPTED</p>
+                        <p class="text-sm text-gray-400">"Arniture": 2D to 3D Furniture augmented reality Flutter
+                            application protocols.</p>
                     </div>
-                    <div class="flex justify-between border-b border-white/20 pb-2">
-                        <span>HINDI</span><span class="text-cyan-400">NATIVE</span>
-                    </div>
-                    <div class="flex justify-between border-b border-white/20 pb-2">
-                        <span>MARATHI</span><span class="text-cyan-400">NATIVE</span>
-                    </div>
+                    <i class="fas fa-scroll text-2xl text-gray-600"></i>
                 </div>
-            </div>
-
-            <div class="manga-card p-6 bg-cyan-500 text-black">
-                <h3 class="font-black text-xl mb-2">RESEARCH_PAPER</h3>
-                <p class="text-xs font-bold leading-tight uppercase">ICATES 2025 Conference: Arniture: 2D to 3D
-                    Furniture augmented reality Flutter application
-                    Protocols. Accepted for publication.</p>
             </div>
         </div>
 
-        <!-- MAIN: Bento Manga -->
-        <div class="lg:col-span-2 space-y-10">
+        <div class="lg:col-span-8 space-y-8">
 
-            <!-- Summary Section -->
-            <section class="manga-card p-8 bg-white text-black">
-                <div class="absolute -top-4 -left-4 bg-black text-white px-4 py-1 font-black italic">PROTOCOL_INFO</div>
-                <p class="text-1xl font-black leading-tight tracking-tight uppercase">
-                    I am an <span class="text-cyan-600 underline">AI and DataScience engineer</span> specialized in
-                    cleaning noisy data,
-                    data Transformation, Databases handling, Predictive anaylsis and building immersive pipelines <span
-                        class="bg-black text-white px-2">Automation on World Data</span>. Currently evolving
-                    at VCET Mumbai (CGPA: 8.0). Batch (2023-2027).
-                </p>
-            </section>
-
-            <!-- Skill Grid -->
-            <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="manga-card p-6 border-blue-400">
-                    <h4 class="font-black mb-4 flex items-center gap-2">
-                        <span class="w-4 h-4 bg-blue-400"></span> PROGRAMMING
-                    </h4>
-                    <div class="flex flex-wrap">
-                        <span class="skill-tag">Python</span>
-                        <span class="skill-tag">Dart</span>
-                        <span class="skill-tag">JavaScript</span>
-                        <span class="skill-tag">Java</span>
-                        <span class="skill-tag">SQL</span>
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-4 reveal">
+                <div class="glass-card p-6 rounded-2xl">
+                    <h4 class="font-bold text-gray-400 mb-4 text-xs font-mono">LANGUAGES</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <span
+                            class="px-3 py-1 bg-blue-500/20 border border-blue-500/50 text-blue-300 text-xs rounded-full font-mono">Python</span>
+                        <span
+                            class="px-3 py-1 bg-blue-500/20 border border-blue-500/50 text-blue-300 text-xs rounded-full font-mono">Dart</span>
+                        <span
+                            class="px-3 py-1 bg-blue-500/20 border border-blue-500/50 text-blue-300 text-xs rounded-full font-mono">SQL</span>
+                        <span
+                            class="px-3 py-1 bg-blue-500/20 border border-blue-500/50 text-blue-300 text-xs rounded-full font-mono">Java</span>
                     </div>
                 </div>
-                <div class="manga-card p-6 border-purple-400">
-                    <h4 class="font-black mb-4 flex items-center gap-2">
-                        <span class="w-4 h-4 bg-purple-400"></span> TOOLS_&_DEV
-                    </h4>
-                    <div class="flex flex-wrap">
-                        <span class="skill-tag">Flutter</span>
-                        <span class="skill-tag">Power BI</span>
-                        <span class="skill-tag">ARCore</span>
-                        <span class="skill-tag">Git</span>
-                        <span class="skill-tag">Firebase</span>
-                        <span class="skill-tag">Pandas</span>
-                        <span class="skill-tag">Zoho Analytics</span>
+                <div class="glass-card p-6 rounded-2xl">
+                    <h4 class="font-bold text-gray-400 mb-4 text-xs font-mono">ARSENAL</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <span
+                            class="px-3 py-1 bg-purple-500/20 border border-purple-500/50 text-purple-300 text-xs rounded-full font-mono">Power
+                            BI</span>
+                        <span
+                            class="px-3 py-1 bg-purple-500/20 border border-purple-500/50 text-purple-300 text-xs rounded-full font-mono">Flutter</span>
+                        <span
+                            class="px-3 py-1 bg-purple-500/20 border border-purple-500/50 text-purple-300 text-xs rounded-full font-mono">Pandas</span>
+                        <span
+                            class="px-3 py-1 bg-purple-500/20 border border-purple-500/50 text-purple-300 text-xs rounded-full font-mono">Firebase</span>
                     </div>
                 </div>
             </section>
 
-            <!-- Projects Section -->
-            <section class="space-y-6">
-                <h2 class="text-4xl font-black italic tracking-tighter text-white stroke-black">DEPLOYED_WORK_//</h2>
+            <section id="projects" class="space-y-6">
+                <div class="flex items-end gap-4 mb-8">
+                    <h2
+                        class="text-4xl md:text-5xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">
+                        DEPLOYED_<br>MODULES</h2>
+                    <div class="h-1 flex-1 bg-gray-800 mb-2"></div>
+                </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Project 1 -->
-                    <div class="manga-card p-6 overflow-hidden">
-                        <div class="bg-cyan-500 text-black font-black text-[10px] px-2 py-0.5 absolute top-4 right-4">
-                            STATUS: ACTIVE</div>
-                        <h4 class="text-2xl font-black mb-2">Executive Summary – Finance Report (Power BI Dashboard)
-                        </h4>
-                        <p class="text-xs text-slate-400 mb-4 font-bold uppercase">A fully interactive Finance Analytics
-                            Dashboard built using Power BI, designed to help understand profits, sales trends,
-                            country-wise performance, and key business indicators. This dashboard converts raw financial
-                            data into meaningful insights through clear visualizations, date filters, and business KPIs.
-                        </p>
-                        <div class="flex gap-2">
-                            <span class="text-[10px] border border-white px-2">PowerBi</span>
-                            <span class="text-[10px] border border-white px-2">Sql</span>
-                            <div><a href='https://github.com/Shubham231005/Executive_Financial_Report'>View</a></div>
+                <div class="glass-card p-0 rounded-2xl group reveal">
+                    <div class="absolute top-0 right-0 p-4 opacity-50 font-mono text-xs">01</div>
+                    <div class="p-8 relative z-10">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-2xl font-bold group-hover:text-cyan-400 transition">Finance Analytics
+                                Dashboard</h3>
+                            <span
+                                class="px-2 py-1 bg-green-500/20 text-green-400 text-[10px] font-bold uppercase tracking-wider rounded">Active</span>
                         </div>
-                    </div>
-
-                    <!-- Project 2 -->
-                    <div class="manga-card p-6">
-                        <div class="bg-pink-500 text-white font-black text-[10px] px-2 py-0.5 absolute top-4 right-4">
-                            STATUS: SECURE</div>
-                        <h4 class="text-2xl font-black mb-2">RealTimePipelining</h4>
-                        <p class="text-xs text-slate-400 mb-4 font-bold uppercase">This project demonstrates an
-                            end-to-end user analytics pipeline that captures real-time website interactions, stores them
-                            in a database, processes the data, and prepares it for business intelligence (BI) analysis.
-
-                            The focus of this project is on backend analytics engineering, including data collection,
-                            preprocessing, and pipeline design.
+                        <p class="text-gray-400 text-sm mb-6 max-w-xl">
+                            A fully interactive Power BI ecosystem designed to dissect profits, sales trends, and KPI
+                            performance. Converts raw financial chaos into actionable business intelligence.
                         </p>
-                        <div class="flex gap-2">
-
-                            <span class="text-[10px] border border-white px-2">PYTHON</span>
-                            <span class="text-[10px] border border-white px-2">HTML</span>
-                            <span class="text-[10px] border border-white px-2">Zoho Analytics</span>
-                            <span class="text-[10px] border border-white px-2">Flask</span>
-                            <span class="text-[10px] border border-white px-2">Sql</span>
-                            <div>
-                                <a href="https://github.com/Shubham231005/Zoho_pipelining">View</a>
+                        <div class="flex items-center justify-between border-t border-white/10 pt-4">
+                            <div class="flex gap-2 text-[10px] text-gray-500 font-mono uppercase">
+                                <span>PowerBI</span> • <span>SQL</span> • <span>DAX</span>
                             </div>
+                            <a href="https://github.com/Shubham231005/Executive_Financial_Report" target="_blank"
+                                class="text-sm font-bold flex items-center gap-2 hover:text-cyan-400 transition">
+                                Access Source <i class="fas fa-arrow-right -rotate-45"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
 
-                <!--project 3-->
-                <div class="manga-card p-6">
-                    <div class="bg-pink-500 text-white font-black text-[10px] px-2 py-0.5 absolute top-4 right-4">
-                        STATUS: SECURE</div>
-                    <h4 class="text-2xl font-black mb-2">🎵 Billboard Analytics Dashboard </h4>
-                    <p class="text-xs text-slate-400 mb-4 font-bold uppercase">A comprehensive Power BI Interactive
-                        Dashboard built to analyze Billboard music performance, rankings, and artist trends using a
-                        well-designed Star Schema Data Model. This project focuses on transforming raw data into
-                        meaningful insights through engaging visuals, filters, DAX measures, and an optimized data
-                        model.
-                    </p>
-                    <div class="flex gap-2">
-
-                        <span class="text-[10px] border border-white px-2">PYTHON</span>
-                        <span class="text-[10px] border border-white px-2">PowerBi</span>
-                        <div>
-                            <a href="https://github.com/Shubham231005/Data_Analytics">View</a>
+                <div class="glass-card p-0 rounded-2xl group reveal">
+                    <div class="absolute top-0 right-0 p-4 opacity-50 font-mono text-xs">02</div>
+                    <div class="p-8 relative z-10">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-2xl font-bold group-hover:text-pink-400 transition">Real-Time Pipelining
+                            </h3>
+                            <span
+                                class="px-2 py-1 bg-purple-500/20 text-purple-400 text-[10px] font-bold uppercase tracking-wider rounded">Secure</span>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-6 max-w-xl">
+                            End-to-end user analytics pipeline capturing live website interactions. Handles data
+                            ingestion, storage, processing, and BI visualization in a seamless flow.
+                        </p>
+                        <div class="flex items-center justify-between border-t border-white/10 pt-4">
+                            <div class="flex gap-2 text-[10px] text-gray-500 font-mono uppercase">
+                                <span>Python</span> • <span>Zoho Analytics</span> • <span>Flask</span>
+                            </div>
+                            <a href="https://github.com/Shubham231005/Zoho_pipelining" target="_blank"
+                                class="text-sm font-bold flex items-center gap-2 hover:text-pink-400 transition">
+                                Access Source <i class="fas fa-arrow-right -rotate-45"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
+
+                <div class="glass-card p-0 rounded-2xl group reveal">
+                    <div class="absolute top-0 right-0 p-4 opacity-50 font-mono text-xs">03</div>
+                    <div class="p-8 relative z-10">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-2xl font-bold group-hover:text-yellow-400 transition">Billboard Analytics
+                            </h3>
+                            <span
+                                class="px-2 py-1 bg-blue-500/20 text-blue-400 text-[10px] font-bold uppercase tracking-wider rounded">Done</span>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-6 max-w-xl">
+                            Comprehensive music performance tracker using Star Schema Data Modeling. Visualizes rankings
+                            and artist trends with optimized DAX measures.
+                        </p>
+                        <div class="flex items-center justify-between border-t border-white/10 pt-4">
+                            <div class="flex gap-2 text-[10px] text-gray-500 font-mono uppercase">
+                                <span>Data Modeling</span> • <span>PowerBI</span>
+                            </div>
+                            <a href="https://github.com/Shubham231005/Data_Analytics" target="_blank"
+                                class="text-sm font-bold flex items-center gap-2 hover:text-yellow-400 transition">
+                                Access Source <i class="fas fa-arrow-right -rotate-45"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
         </div>
-        </section>
-
-        <!-- Connect -->
-        <section class="flex flex-wrap gap-4">
-            <a href="https://github.com/Shubham231005" target="_blank" class="cyber-btn">Github_Link</a>
-            <a href="https://linkedin.com/in/shubham-parande-38a787271" target="_blank" class="cyber-btn"
-                style="border-color: #ff00ff; color: #ff00ff;">LinkedIn_Link</a>
-            <a href="mailto:sparande495@gmail.com" class="cyber-btn"
-                style="border-color: #fff; color: #fff;">Email_Connect</a>
-        </section>
-
-    </div>
     </div>
 
-    <footer class="mt-20 border-t-4 border-white pt-10 text-center pb-20">
-        <p class="font-black italic text-5xl md:text-8xl opacity-10">SHUBHAM.EXE</p>
+    <footer class="mt-32 border-t border-white/10 pt-10 pb-20 text-center relative overflow-hidden">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-[10rem] font-black italic opacity-[0.03] pointer-events-none select-none whitespace-nowrap"
+            style="font-family: 'Syncopate';">
+            SHUBHAM.EXE
+        </div>
+        <div class="relative z-10 flex justify-center gap-8 mb-8">
+            <a href="https://github.com/Shubham231005"
+                class="text-2xl hover:text-cyan-400 transition hover:scale-125"><i class="fab fa-github"></i></a>
+            <a href="https://linkedin.com/in/shubham-parande-38a787271"
+                class="text-2xl hover:text-pink-400 transition hover:scale-125"><i class="fab fa-linkedin"></i></a>
+            <a href="mailto:sparande495@gmail.com" class="text-2xl hover:text-white transition hover:scale-125"><i
+                    class="fas fa-envelope"></i></a>
+        </div>
+        <p class="text-gray-600 text-xs font-mono">© 2025 DATA SHINOBI PROTOCOLS. ALL RIGHTS RESERVED.</p>
     </footer>
 
     <script>
-        // Eye tracking
+        // --- Custom Cursor Logic ---
+        const cursorDot = document.querySelector("[data-cursor-dot]");
+        const cursorOutline = document.querySelector("[data-cursor-outline]");
+
+        window.addEventListener("mousemove", function (e) {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            // Dot follows instantly
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+
+            // Outline follows with slight delay (animation in CSS)
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+
+            // Move the ambient glow
+            const glow = document.getElementById('glow-follow');
+            glow.style.transform = `translate(${posX - 250}px, ${posY - 250}px)`;
+        });
+
+        // Add hover effect to cursor
+        document.querySelectorAll('a, button').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursorOutline.style.width = '60px';
+                cursorOutline.style.height = '60px';
+                cursorOutline.style.backgroundColor = 'rgba(0, 242, 255, 0.1)';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursorOutline.style.width = '40px';
+                cursorOutline.style.height = '40px';
+                cursorOutline.style.backgroundColor = 'transparent';
+            });
+        });
+
+        // --- Eye Tracking Logic ---
         document.addEventListener('mousemove', (e) => {
             const iris = document.getElementById('iris');
             const eye = document.getElementById('anime-eye');
@@ -363,7 +547,8 @@
             const eyeY = rect.top + rect.height / 2;
 
             const angle = Math.atan2(e.clientY - eyeY, e.clientX - eyeX);
-            const dist = 15;
+            // Limit movement range so it stays in eye
+            const dist = Math.min(10, Math.hypot(e.clientX - eyeX, e.clientY - eyeY) / 10);
 
             const x = Math.cos(angle) * dist;
             const y = Math.sin(angle) * dist;
@@ -371,43 +556,68 @@
             iris.style.transform = `translate(${x}px, ${y}px)`;
         });
 
-        // Bouncing Data Particles
+        // --- Scroll Reveal & Skill Bar Animation ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+
+                    // Trigger skill bars if inside the entry
+                    const skillBars = entry.target.querySelectorAll('.skill-bar-fill');
+                    skillBars.forEach(bar => {
+                        bar.style.width = bar.getAttribute('data-width');
+                    });
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // --- Bouncing Particles (Refined) ---
         const canvas = document.getElementById('data-particles');
         const ctx = canvas.getContext('2d');
         let particles = [];
-        const skills = ['PYTHON', 'SQL', 'AR', 'AI', 'DART', 'FLUTTER', 'DATA'];
+        const skills = ['01', '10', 'AI', 'DB', '{}', '</>', 'PY'];
 
-        function init() {
-            canvas.width = 200;
-            canvas.height = 200;
-            particles = skills.map(s => ({
-                text: s,
-                x: Math.random() * 200,
-                y: Math.random() * 200,
-                vx: (Math.random() - 0.5) * 2,
-                vy: (Math.random() - 0.5) * 2,
-                size: 8 + Math.random() * 8
-            }));
+        function initParticles() {
+            canvas.width = canvas.parentElement.offsetWidth;
+            canvas.height = canvas.parentElement.offsetHeight;
+            particles = [];
+            for (let i = 0; i < 15; i++) {
+                particles.push({
+                    text: skills[Math.floor(Math.random() * skills.length)],
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 1, // Slower, smoother
+                    vy: (Math.random() - 0.5) * 1,
+                    size: 10 + Math.random() * 10
+                });
+            }
         }
 
-        function draw() {
+        function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(0, 242, 255, 0.4)'; // Cyan font
+            ctx.font = 'bold 12px "JetBrains Mono"';
+
             particles.forEach(p => {
                 p.x += p.vx;
                 p.y += p.vy;
 
-                if (p.x < 0 || p.x > 200) p.vx *= -1;
-                if (p.y < 0 || p.y > 200) p.vy *= -1;
+                // Wrap around edges instead of bouncing (Matrix feel)
+                if (p.x < 0) p.x = canvas.width;
+                if (p.x > canvas.width) p.x = 0;
+                if (p.y < 0) p.y = canvas.height;
+                if (p.y > canvas.height) p.y = 0;
 
-                ctx.font = `900 ${p.size}px JetBrains Mono`;
-                ctx.fillStyle = `rgba(0, 242, 255, 0.3)`;
                 ctx.fillText(p.text, p.x, p.y);
             });
-            requestAnimationFrame(draw);
+            requestAnimationFrame(animateParticles);
         }
 
-        init();
-        draw();
+        window.addEventListener('resize', initParticles);
+        initParticles();
+        animateParticles();
     </script>
 </body>
 
